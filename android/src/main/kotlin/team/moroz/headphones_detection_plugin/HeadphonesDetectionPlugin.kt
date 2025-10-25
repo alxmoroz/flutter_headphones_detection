@@ -52,10 +52,10 @@ class HeadphonesDetectionPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         eventSink = events
         
-        // Отправляем текущее состояние сразу
+        // Send current state immediately
         eventSink?.success(isHeadphonesConnected())
         
-        // Регистрируем BroadcastReceiver для отслеживания изменений
+        // Register BroadcastReceiver to track changes
         headsetReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
@@ -64,7 +64,7 @@ class HeadphonesDetectionPlugin: FlutterPlugin, MethodCallHandler, EventChannel.
                         eventSink?.success(state == 1)
                     }
                     AudioManager.ACTION_AUDIO_BECOMING_NOISY -> {
-                        // Наушники отключены
+                        // Headphones disconnected
                         eventSink?.success(false)
                     }
                     Intent.ACTION_HEADSET_PLUG -> {
