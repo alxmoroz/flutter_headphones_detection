@@ -2,6 +2,8 @@
 
 A Flutter plugin to detect headphones connection status and retrieve device information on Android and iOS devices.
 
+[中文文档](README.zh.md) | [English](README.md)
+
 ## Features
 
 - ✅ Detect wired headphones connection
