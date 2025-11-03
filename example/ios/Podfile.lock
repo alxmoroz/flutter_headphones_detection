@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - headphones_detection (1.0.0):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - headphones_detection (from `.symlinks/plugins/headphones_detection/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  headphones_detection:
+    :path: ".symlinks/plugins/headphones_detection/ios"
+
+SPEC CHECKSUMS:
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  headphones_detection: d5f62fab810fde246f60f0de651243987afb1aac
+
+PODFILE CHECKSUM: 251cb053df7158f337c0712f2ab29f4e0fa474ce
+
+COCOAPODS: 1.16.2
