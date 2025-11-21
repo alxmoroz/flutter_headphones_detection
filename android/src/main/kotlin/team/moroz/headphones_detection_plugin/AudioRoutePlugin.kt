@@ -1,6 +1,5 @@
 package team.moroz.headphones_detection_plugin
 
-import android.content.Context
 import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
@@ -13,16 +12,14 @@ import io.flutter.plugin.common.MethodChannel.Result
 
 /**
  * Plugin for detecting active audio route
- * Combines headset events and audio route detection via AudioManager
+ * Uses AudioDeviceCallback to track audio device changes (wired headphones and Bluetooth)
  */
 class AudioRoutePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
-    private var context: Context? = null
     private var audioManager: AudioManager? = null
     private var eventSink: EventChannel.EventSink? = null
     
-    private val headsetEventsHandler = HeadsetEventsHandler()
     private val audioRouteDetector = AudioRouteDetector()
     private val handler = Handler(Looper.getMainLooper())
 
@@ -33,8 +30,8 @@ class AudioRoutePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHan
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "headphones_detection_stream")
         eventChannel.setStreamHandler(this)
         
-        context = flutterPluginBinding.applicationContext
-        audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        val context = flutterPluginBinding.applicationContext
+        audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager?
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
@@ -52,7 +49,7 @@ class AudioRoutePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHan
 
     /**
      * Get current audio route type
-     * Combines information from HeadsetEventsHandler and AudioRouteDetector
+     * Uses AudioRouteDetector to determine active audio route
      * @return "wired", "bluetooth", or "none"
      */
     private fun getCurrentAudioRouteType(): String {
@@ -72,27 +69,17 @@ class AudioRoutePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHan
         
         // Stream will only emit events when route actually changes, not on subscription
         
-        // Register AudioDeviceCallback to track Bluetooth and other device changes
+        // Register AudioDeviceCallback to track all audio device changes (wired headphones and Bluetooth)
         audioRouteDetector.registerAudioDeviceCallback(
             audioManager,
             callback = { emitCurrentAudioRouteType() },
             handler = handler
         )
-        
-        // Register BroadcastReceiver to track wired headphones events
-        headsetEventsHandler.registerReceiver(context) { headsetState ->
-            // On event from HeadsetEventsHandler, check current route
-            // (Bluetooth may be active even with wired connected)
-            emitCurrentAudioRouteType()
-        }
     }
 
     override fun onCancel(arguments: Any?) {
         // Unregister AudioDeviceCallback
         audioRouteDetector.unregisterAudioDeviceCallback(audioManager)
-        
-        // Unregister BroadcastReceiver
-        headsetEventsHandler.unregisterReceiver(context)
         
         eventSink = null
     }
