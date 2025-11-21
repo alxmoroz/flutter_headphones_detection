@@ -82,10 +82,7 @@ public class HeadphonesDetectionPlugin: NSObject, FlutterPlugin, FlutterStreamHa
             object: AVAudioSession.sharedInstance()
         )
         
-        // Send current state on connection
-        let currentRouteType = getCurrentRouteType()
-        events(currentRouteType)
-        
+        // Stream will only emit events when route actually changes, not on subscription
         return nil
     }
     

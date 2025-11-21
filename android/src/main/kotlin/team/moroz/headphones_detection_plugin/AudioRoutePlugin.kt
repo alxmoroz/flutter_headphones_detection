@@ -70,8 +70,7 @@ class AudioRoutePlugin: FlutterPlugin, MethodCallHandler, EventChannel.StreamHan
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
         eventSink = events
         
-        // Send current state immediately
-        emitCurrentAudioRouteType()
+        // Stream will only emit events when route actually changes, not on subscription
         
         // Register AudioDeviceCallback to track Bluetooth and other device changes
         audioRouteDetector.registerAudioDeviceCallback(

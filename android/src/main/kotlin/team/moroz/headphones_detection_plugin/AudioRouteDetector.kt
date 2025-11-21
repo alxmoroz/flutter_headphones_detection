@@ -46,6 +46,11 @@ class AudioRouteDetector {
     ) {
         if (audioManager == null) return
         
+        // Unregister existing callback if any before registering new one
+        if (audioDeviceCallback != null) {
+            unregisterAudioDeviceCallback(audioManager)
+        }
+        
         audioDeviceCallback = object : AudioDeviceCallback() {
             override fun onAudioDevicesAdded(addedDevices: Array<out AudioDeviceInfo>) {
                 // Event received - device added

@@ -30,6 +30,11 @@ class HeadsetEventsHandler {
     fun registerReceiver(context: Context?, callback: (String) -> Unit) {
         if (context == null) return
         
+        // Unregister existing receiver if any before registering new one
+        if (headsetReceiver != null) {
+            unregisterReceiver(context)
+        }
+        
         headsetReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
