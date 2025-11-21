@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startListening() {
-    _subscription = HeadphonesDetection.getPeriodicStream(interval: const Duration(seconds: 1)).listen((connected) {
+    _subscription = HeadphonesDetection.headphonesStream.listen((connected) {
       setState(() {
         _isConnected = connected;
         _status = connected ? 'Connected' : 'Disconnected';

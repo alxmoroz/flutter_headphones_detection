@@ -12,16 +12,17 @@ class HeadphonesDetection {
 
   /// Check if headphones are currently connected.
   ///
-  /// Returns `true` if headphones (wired or Bluetooth) are connected, `false` otherwise.
+  /// Returns `true` if headphones (wired or Bluetooth) are connected and audio is routed through them, `false` otherwise.
   ///
   /// On Android, this checks for:
   /// - Wired headphones via `AudioManager.isWiredHeadsetOn()`
   /// - Bluetooth A2DP devices via `AudioManager.isBluetoothA2dpOn()`
   /// - Bluetooth SCO devices via `AudioManager.isBluetoothScoOn()`
   ///
-  /// On iOS, this checks for:
-  /// - Headphones via `AVAudioSession.currentRoute.outputs`
-  /// - Bluetooth devices (A2DP, HFP, LE)
+  /// On iOS, this checks the current audio route:
+  /// - Returns `true` if route is headphones or bluetooth (audio goes through headphones)
+  /// - Returns `false` if route is speaker or receiver (audio goes through speaker)
+  /// This is important because physical connection doesn't mean audio is routed through headphones.
   static Future<bool> isHeadphonesConnected() async {
     try {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -41,25 +42,22 @@ class HeadphonesDetection {
   ///
   /// The stream emits `true` when headphones are connected and `false` when disconnected.
   ///
-  /// Note: Currently returns a periodic stream that checks every 2 seconds.
-  /// Future versions may provide real-time events through platform channels.
+  /// On iOS, this uses real-time audio route change notifications.
+  /// The plugin sends route type (speaker/headphones/bluetooth/receiver) and
+  /// we determine if headphones are active based on the route.
   static Stream<bool> get headphonesStream {
     return _eventChannel.receiveBroadcastStream().map((event) {
-      return event as bool;
-    });
-  }
-
-  /// Get a periodic stream that checks headphones status every [interval].
-  ///
-  /// This is useful when real-time events are not available on the platform.
-  static Stream<bool> getPeriodicStream({Duration interval = const Duration(seconds: 2)}) {
-    return Stream.periodic(interval, (_) async {
-      try {
-        return await isHeadphonesConnected();
-      } catch (e) {
-        return false;
+      // EventChannel на iOS отправляет тип маршрута (String)
+      // На Android отправляет bool напрямую
+      if (Platform.isIOS) {
+        final routeType = event as String?;
+        // Наушники активны, если маршрут - headphones или bluetooth
+        return routeType == "headphones" || routeType == "bluetooth";
+      } else {
+        // На Android отправляется bool напрямую
+        return event as bool;
       }
-    }).asyncMap((event) => event);
+    });
   }
 }
 
