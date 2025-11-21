@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - iOS: Returns route type ("headphones", "bluetooth", "speaker", "receiver", "unknown")
 - Android: Returns route type ("wired", "bluetooth", "none")
 - Dart layer determines if headphones are connected based on route type
-- All comments translated to English for better internationalization
 
 ## [1.0.2] - 2025-11-21
 
