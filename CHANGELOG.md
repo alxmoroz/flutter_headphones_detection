@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-11-21
+
+### Changed
+- **Architecture refactoring**: Moved headphones detection logic from native code to Dart layer for consistency
+- Android plugin renamed from `HeadphonesDetectionPlugin` to `AudioRoutePlugin` to better reflect its purpose
+- Android code split into separate components: `HeadsetEventsHandler` (wired headphones events) and `AudioRouteDetector` (audio route detection)
+- iOS and Android now return audio route type (String) instead of boolean, with unified logic in Dart
+- Improved code organization following SOLID principles and Clean Architecture
+
+### Technical Details
+- iOS: Returns route type ("headphones", "bluetooth", "speaker", "receiver", "unknown")
+- Android: Returns route type ("wired", "bluetooth", "none")
+- Dart layer determines if headphones are connected based on route type
+- All comments translated to English for better internationalization
+
 ## [1.0.2] - 2025-11-21
 
 ### Added

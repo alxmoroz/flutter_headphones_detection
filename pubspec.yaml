@@ -1,6 +1,6 @@
 name: headphones_detection
 description: A Flutter plugin to detect headphones connection status on Android and iOS devices.
-version: 1.0.2
+version: 1.1.0
 homepage: https://github.com/alxmoroz/flutter_headphones_detection
 repository: https://github.com/alxmoroz/flutter_headphones_detection
 issue_tracker: https://github.com/alxmoroz/headphones_detection_flutter/issues
@@ -23,6 +23,6 @@ flutter:
     platforms:
       android:
         package: team.moroz.headphones_detection_plugin
-        pluginClass: HeadphonesDetectionPlugin
+        pluginClass: AudioRoutePlugin
       ios:
         pluginClass: HeadphonesDetectionPlugin

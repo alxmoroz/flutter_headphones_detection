@@ -8,7 +8,8 @@ A Flutter plugin to detect headphones connection status on Android and iOS devic
 - ✅ Detect Bluetooth headphones connection  
 - ✅ Cross-platform support (Android & iOS)
 - ✅ Stream support for real-time monitoring
-- ✅ Periodic checking for reliable updates
+- ✅ Detects active audio route (not just physical connection) on iOS
+- ✅ Clean architecture with unified logic in Dart layer
 
 ## Installation
 
@@ -16,7 +17,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  headphones_detection: ^1.0.0
+  headphones_detection: ^1.1.0
 ```
 
 ## Usage
@@ -36,16 +37,10 @@ print('Headphones connected: $isConnected');
 ```dart
 import 'package:headphones_detection/headphones_detection.dart';
 
-// Listen to headphones connection changes
+// Listen to headphones connection changes in real-time
 HeadphonesDetection.headphonesStream.listen((connected) {
   print('Headphones status changed: $connected');
 });
-
-// Or use periodic checking
-HeadphonesDetection.getPeriodicStream(interval: Duration(seconds: 1))
-  .listen((connected) {
-    print('Headphones connected: $connected');
-  });
 ```
 
 ### Error Handling
@@ -61,13 +56,15 @@ try {
 ## Platform Support
 
 ### Android
-- Detects wired headphones via `AudioManager.isWiredHeadsetOn()`
-- Detects Bluetooth A2DP devices via `AudioManager.isBluetoothA2dpOn()`
+- Detects wired headphones via `AudioManager.isWiredHeadsetOn()` and `BroadcastReceiver`
+- Detects Bluetooth A2DP devices via `AudioManager.isBluetoothA2dpOn()` and `AudioDeviceCallback` (API 23+)
 - Detects Bluetooth SCO devices via `AudioManager.isBluetoothScoOn()`
+- Returns audio route type: "wired", "bluetooth", or "none"
 
 ### iOS
-- Detects headphones via `AVAudioSession.currentRoute.outputs`
-- Detects Bluetooth devices (A2DP, HFP, LE)
+- Detects active audio route via `AVAudioSession.routeChangeNotification`
+- Returns audio route type: "headphones", "bluetooth", "speaker", "receiver", or "unknown"
+- Important: Checks active audio route, not just physical connection (audio may route through speaker even if headphones are plugged in)
 
 ## Permissions
 
